@@ -74,8 +74,17 @@ Template.home.events
       $('body').empty()
       Blaze.render(Template.home, $('body')[0])
 
+    width = $(window).width()
+    maxRounds = 15
 
-    if round < 15
+    switch
+      when width < 386 then maxRounds = 6
+      when width < 459 then maxRounds = 8
+      when width < 532 then maxRounds = 10
+      when width < 605 then maxRounds = 12
+      when width < 678 then maxRounds = 14
+
+    if round < maxRounds
       if rows == cols then rows++ else cols++
       setTimes()
       refreshTemplate()
