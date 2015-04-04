@@ -65,11 +65,8 @@ Template.home.events
       time = new Date - timer
       times.push (Math.ceil time) / 1000
       root.fastest = _.min times
-      $('#fastest').text(fastest)
       total = _.reduce(times, ((memo, num) -> memo + num), 0)
-      length = times.length
-      root.average = (Math.ceil 1000 * total / length) / 1000
-      $('#average').text(average)
+      root.average = (Math.ceil 1000 * total / times.length) / 1000
 
     refreshTemplate = ->
       root.round++
