@@ -1,0 +1,15 @@
+.container {
+  max-width: 960px;
+  margin: auto;
+  text-align: center;
+}
+
+.square {
+  width: 4.5em;
+  height: 4.5em;
+  border-radius: 0.5em;
+  margin: 0.2em;
+  background-color: #000;
+  display: inline-block;
+  cursor: pointer;
+}

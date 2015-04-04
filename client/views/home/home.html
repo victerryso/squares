@@ -1,0 +1,46 @@
+<template name="home">
+
+  <div class="ui segment">
+    <div class="container">
+
+      <div class="ui header">
+        Squares
+      </div>
+
+      <div class="segment">
+        Round {{round}}
+        <br>
+        Fastest Time: <span id='fastest'>0</span>s,
+        Average Time: <span id='average'>0</span>s
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="ui segment">
+    <div class="container">
+
+      <div id="squares">
+
+        {{#each rows}}
+          {{> row}}
+        {{/each}}
+
+      </div>
+
+    </div>
+  </div>
+
+</template>
+
+<template name='row'>
+  {{#each cols}}
+    {{> square}}
+  {{/each}}
+  <br>
+</template>
+
+<template name='square'>
+  <div class='square' style='background-color: {{color}}'></div>
+</template>
