@@ -57,6 +57,31 @@ Template.home.rendered = ->
   rgb = "rgb(#{matches[1]}, #{matches[2]}, #{matches[3]})"
   $(square).css 'background-color', rgb
 
+  bounce = -> $(square).toggleClass('animated bounce')
+  if root.repeatBounce then clearInterval(repeatBounce)
+  root.repeatBounce = setInterval(bounce, 5000)
+
+  # Stopwatch
+  unless Session.get('startTime') then Session.set('startTime', new Date)
+  startTime = Session.get('startTime') || new Date
+
+  startWatch = ->
+    time = new Date
+    difference = time - startTime
+
+    m = parseInt(difference / 60000)
+    s = parseInt(difference / 1000)
+    ms = parseInt(difference % 1000)
+
+    until s < 60  then s = s - 60
+    until "#{m}".length is 2 then m = '0' + m
+    until "#{s}".length is 2 then s = '0' + s
+    until "#{ms}".length is 3 then ms = '0' + ms
+
+    $('.stopwatch').text(m + ':' + s + ':' + ms)
+
+  if root.stopwatch then clearInterval(stopwatch)
+  root.stopwatch = setInterval(startWatch, 5)
 
 Template.home.events
   'click #square': (event, template) ->
@@ -75,14 +100,12 @@ Template.home.events
       Blaze.render(Template.home, $('body')[0])
 
     width = $(window).width()
-    maxRounds = 15
+    maxRounds = 10
 
     switch
       when width < 386 then maxRounds = 6
       when width < 459 then maxRounds = 8
       when width < 532 then maxRounds = 10
-      when width < 605 then maxRounds = 12
-      when width < 678 then maxRounds = 14
 
     if round < maxRounds
       if rows == cols then rows++ else cols++
@@ -97,6 +120,7 @@ Template.home.events
       root.cols  = 2
       root.timer = []
       root.start = new Date
+      Session.set('startTime', new Date)
       root.color = newColor()
 
       refreshTemplate()
