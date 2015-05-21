@@ -4,33 +4,20 @@ newColor = ->
   color = ''
   until color.length == 7
     color = '#' + _.random(16777215).toString(16)
-  color
 
 root.round = 1
 root.rows  = 2
 root.cols  = 2
-root.start = new Date
 root.times = []
 root.color = newColor()
 
 Template.home.helpers
-  round: ->
-    round
+  round: -> round
 
-  rows: ->
-    i = 0
-    array = []
-    while i < rows
-      array.push i
-      i++
+  rows: -> _.range(rows)
 
 Template.row.helpers
-  cols: ->
-    i = 0
-    array = []
-    while i < cols
-      array.push i
-      i++
+  cols: -> _.range(cols)
 
 Template.square.helpers
   color: -> color
@@ -38,6 +25,7 @@ Template.square.helpers
 Template.home.rendered = ->
   root.timer = new Date
 
+  # Alter one square
   square = _.sample $('.square')
   square.id = 'square'
   color = $(square).css 'background-color'
@@ -48,15 +36,16 @@ Template.home.rendered = ->
   matches = _.map matches, (match) ->
     number = parseInt match
     if number < 50
-      number = number + _.random(50)
+      number = number + _.random(5, 50)
     else if number > 200
-      number = number - _.random(50)
+      number = number - _.random(5, 50)
     else
       number = number + _.random(-50, 50)
 
   rgb = "rgb(#{matches[1]}, #{matches[2]}, #{matches[3]})"
   $(square).css 'background-color', rgb
 
+  # Bounce after 5s
   bounce = -> $(square).toggleClass('animated bounce')
   if root.repeatBounce then clearInterval(repeatBounce)
   root.repeatBounce = setInterval(bounce, 5000)
@@ -69,16 +58,16 @@ Template.home.rendered = ->
     time = new Date
     difference = time - startTime
 
-    m = parseInt(difference / 60000)
-    s = parseInt(difference / 1000)
-    ms = parseInt(difference % 1000)
+    minute = parseInt(difference / 60000)
+    second = parseInt(difference / 1000)
+    millis = parseInt(difference % 1000)
 
-    until s < 60  then s = s - 60
-    until "#{m}".length is 2 then m = '0' + m
-    until "#{s}".length is 2 then s = '0' + s
-    until "#{ms}".length is 3 then ms = '0' + ms
+    until second < 60  then second = second - 60
+    until "#{minute}".length is 2 then minute = '0' + minute
+    until "#{second}".length is 2 then second = '0' + second
+    until "#{millis}".length is 3 then millis = '0' + millis
 
-    $('.stopwatch').text(m + ':' + s + ':' + ms)
+    $('.stopwatch').text(minute + ':' + second + ':' + millis)
 
   if root.stopwatch then clearInterval(stopwatch)
   root.stopwatch = setInterval(startWatch, 5)
@@ -102,27 +91,28 @@ Template.home.events
     width = $(window).width()
     maxRounds = 10
 
+    # Responsive
     switch
       when width < 386 then maxRounds = 6
       when width < 459 then maxRounds = 8
-      when width < 532 then maxRounds = 10
 
+    # Next round
     if round < maxRounds
       if rows == cols then rows++ else cols++
       setTimes()
       refreshTemplate()
+
+    # End Game
     else
       setTimes()
-      finish = (new Date - start) / 1000
+      finish = (new Date - Session.get('startTime')) / 1000
 
       root.round = 0
       root.rows  = 2
       root.cols  = 2
       root.timer = []
-      root.start = new Date
       Session.set('startTime', new Date)
       root.color = newColor()
 
       refreshTemplate()
       swal("Good job!", "Fastest Time: #{fastest}s\nAverage Time: #{average}s\nTotal Time: #{finish}s", "success")
-

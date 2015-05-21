@@ -13,3 +13,6 @@
   display: inline-block;
   cursor: pointer;
 }
+.stopwatch {
+  min-height: 0 !important;
+}
